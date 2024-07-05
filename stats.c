@@ -58,30 +58,73 @@ void main() {
 }
 
 void print_statistics (unsigned char minimum, unsigned char maximum, float mean, unsigned char median){
+	printf("The minimum is %d \n", minimum);
+	printf("The maximum is %d \n", maximum);
+	printf("The mean is %f \n", mean);
+	printf("The median is %d \n", median);
 
 }
 
 
 void print_array (unsigned char *array, unsigned int arrayLength){
+	for (int i=0; i<arrayLength; i++){
+    printf("%d,", *(array + i));
+  }
+  printf("\n");
 
 }
 
 unsigned char find_median (unsigned char *array, unsigned int arrayLength){
-
+	unsigned char median = 0;
+	median = *(array + (arrayLength / 2) -1);
+	return median;
 }
 
 float find_mean (unsigned char *array, unsigned int arrayLength){
+	unsigned char avg=0;
+
+	// Add up all the numbers in the array
+	for(int i=0; i<arrayLength; i++){
+    avg+= arrayPtr[i];
+  }
+  
+  // Integer division using Array Length
+  return (avg/arrayLength);
 
 }
 
 unsigned char find_maximum (unsigned char *array, unsigned int arrayLength){
-
+	for (int i=1; i<arrayLength; i++){ // start the loop from the second elemnt
+    if (*(array + i) > maximum){
+      maximum = *(array + i);
+    }
+  }
+  return maximum;
 }
 
 unsigned char find_minimum (unsigned char *array, unsigned int arrayLength){
+	unsigned char minimum = *array; // initalize the minimum variable with the value of the first array element
+	for (int i=1; i<arrayLength; i++){ // start the loop from the second elemnt
+    if (*(array + i) < minimum){
+      minimum = *(array + i);
+    }
+  }
+  return minimum;
 
 }
 
 void sort_array (unsigned char *array, unsigned int arrayLength){
+	unsigned char i, j = 0;
+	unsigned char temp;
+	// Sort Array
+	for(i=0; i<arrayLength; i++){
+		for(j=i+1; j<arrayLength; j++){
+			if(arrayPtr[i]<arrayPtr[j]){
+			temp = arrayPtr[i];
+			arrayPtr[i]=arrayPtr[j];
+			arrayPtr[j]=temp;
+      }
+    }
+  }
 
 }
