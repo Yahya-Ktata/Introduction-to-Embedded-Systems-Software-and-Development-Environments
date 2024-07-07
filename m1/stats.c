@@ -81,11 +81,12 @@ unsigned char find_median (unsigned char *array, unsigned int arrayLength){
 }
 
 float find_mean (unsigned char *array, unsigned int arrayLength){
-	unsigned char avg=0;
+	float avg=0;
 
 	// Add up all the numbers in the array
 	for(int i=0; i<arrayLength; i++){
-    avg+= arrayPtr[i];
+    avg+= array[i];
+	
   }
   
   // Integer division using Array Length
@@ -94,6 +95,7 @@ float find_mean (unsigned char *array, unsigned int arrayLength){
 }
 
 unsigned char find_maximum (unsigned char *array, unsigned int arrayLength){
+	unsigned char maximum = *array; // initalize the maximum variable with the value of the first array element
 	for (int i=1; i<arrayLength; i++){ // start the loop from the second elemnt
     if (*(array + i) > maximum){
       maximum = *(array + i);
@@ -119,10 +121,10 @@ void sort_array (unsigned char *array, unsigned int arrayLength){
 	// Sort Array
 	for(i=0; i<arrayLength; i++){
 		for(j=i+1; j<arrayLength; j++){
-			if(arrayPtr[i]<arrayPtr[j]){
-			temp = arrayPtr[i];
-			arrayPtr[i]=arrayPtr[j];
-			arrayPtr[j]=temp;
+			if(array[i]<array[j]){
+			temp = array[i];
+			array[i]=array[j];
+			array[j]=temp;
       }
     }
   }
