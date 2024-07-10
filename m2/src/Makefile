@@ -10,32 +10,108 @@
 #*****************************************************************************
 
 #------------------------------------------------------------------------------
-# <Put a Description Here>
+# Description: This Makefile handles building for both host and MSP432 platforms.
 #
 # Use: make [TARGET] [PLATFORM-OVERRIDES]
 #
 # Build Targets:
-#      <Put a description of the supported targets here>
+#	   build        - Compiles all object files and links them into an executable.
+# 	   compile-all  - Compiles all object files without linking.
+#      clean        - Removes all built files (objects, executable, etc.).
+#      <file>.i     - Generates preprocessed output of the C files.
+#      <file>.asm   - Generates assembly output of the C files.
+#      <file>.o     - Compiles C files into object files.
 #
 # Platform Overrides:
-#      <Put a description of the supported Overrides here
+#      PLATFORM=HOST    - Builds for the host platform (default).
+#      PLATFORM=MSP432  - Builds for the MSP432 microcontroller.
 #
 #------------------------------------------------------------------------------
 include sources.mk
 
 # Platform Overrides
-PLATFORM = 
+PLATFORM=HOST
 
-# Architectures Specific Flags
-LINKER_FILE = 
-CPU = 
-ARCH = 
-SPECS = 
+# General Flags for all platforms
+GEN_FLAGS = \
+            -Wall \
+            -Werror \
+            -g \
+            -O0 \
+            -std=c99
 
-# Compiler Flags and Defines
-CC = 
-LD = 
-LDFLAGS = 
-CFLAGS = 
-CPPFLAGs = 
+TARGET = c1m2
 
+# Platform Dependant Variables
+ifeq ($(PLATFORM),MSP432)
+    # MSP432 dependant build options
+    CPU = cortex-m4
+    ARCH = armv7e-m
+
+    # Compiler
+    CC = arm-none-eabi-gcc
+
+    # Linker
+    LD = arm-none-eabi-ld
+    SIZE = arm-none-eabi-size
+
+    # Linker Flags
+    LINKER_FILE = ../msp432p401r.lds
+    LDFLAGS = -Wl,-Map=$(TARGET).map -T $(LINKER_FILE)
+    
+    # Compiler Flags
+    CFLAGS =    $(GEN_FLAGS) \
+                -mcpu=$(CPU) \
+                -mthumb \
+                -march=$(ARCH) \
+                -mfloat-abi=hard \
+                -mfpu=fpv4-sp-d16\
+                --specs=nosys.specs
+    CPPFLAGS = -DMSP432 $(INCLUDES)
+
+else
+    # Host platform options
+    CC = gcc
+    CFLAGS = $(GEN_FLAGS) $(INCLUDES)
+    CPPFLAGS = -DHOST $(INCLUDES)
+    SIZE = size
+
+endif
+
+PREP = $(SOURCES:.c=.i)    # Preprocessor Files
+DEPS = $(SOURCES:.c=.d)    # Dependency Files
+ASMS = $(SOURCES:.c=.asm)  # Assembly Files
+OBJS = $(SOURCES:.c=.o)    # Object files
+
+.PHONY: compile-all build clean
+
+# Compile all object files and link into a final executable.
+build: $(TARGET).out
+
+$(TARGET).out: $(OBJS)
+    $(CC) $(OBJS) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -o $@
+    $(SIZE) $@
+    
+# Generate Preprocessed output of all c-program implementation files (use the -E flag)
+%.i: %.c
+    $(CC) -E $< $(CFLAGS) $(CPPFLAGS) -o $@
+
+# Generate assembly output of c-program implementation files and the final output executable (Use the –S flag and the objdump utility).
+%.asm: %.c
+    $(CC) -S $< $(CFLAGS) $(CPPFLAGS) -o $@
+
+# Generate the object file for all c-source files (but do not link) by specifying the object file you want to compile.
+%.o: %.c
+    $(CC) -c $< $(CFLAGS) $(CPPFLAGS) -o $@
+
+# Generate Dependency files for each Source File
+%.d: %.c
+    $(CC) -E -M $<  $(CPPFLAGS) -o $@
+
+# Compile all object files, but DO NOT link.
+compile-all: $(OBJS)
+
+clean:
+    # This should remove all compiled objects, preprocessed outputs, assembly outputs, executable files and build output files.
+    @echo Removing all built files
+    rm -f *.out *.map *.o *.asm *.i

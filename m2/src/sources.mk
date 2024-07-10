@@ -8,11 +8,24 @@
 # misuse of this material. 
 #
 #*****************************************************************************
+# sources.mk - List of source files and include directories for the project
 
-# Add your Source files to this variable
-SOURCES = ./main.c \
-		  ./memory.c \
+# General source files
+SOURCES = \
+    src/main.c \
+    src/memory.c
 
-# Add your include paths to this variable
-INCLUDES = -I ../include/common
+# Platform-specific source files (for MSP432)
+ifeq ($(PLATFORM),MSP432)
+    SOURCES += \
+        src/system_msp432p401r.c \
+        src/interrupts_msp432p401r_gcc.c \
+        src/startup_msp432p401r_gcc.c
+endif
 
+# Include directories
+INCLUDES = \
+    -Iinclude \
+    -Iinclude/CMSIS \
+    -Iinclude/common \
+    -Iinclude/msp432
