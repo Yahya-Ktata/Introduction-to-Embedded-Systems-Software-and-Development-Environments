@@ -12,20 +12,20 @@
 
 # General source files
 SOURCES = \
-    src/main.c \
-    src/memory.c
+	main.c \
+	memory.c 
 
 # Platform-specific source files (for MSP432)
 ifeq ($(PLATFORM),MSP432)
-    SOURCES += \
-        src/system_msp432p401r.c \
-        src/interrupts_msp432p401r_gcc.c \
-        src/startup_msp432p401r_gcc.c
+	SOURCES += \
+		system_msp432p401r.c \
+		interrupts_msp432p401r_gcc.c \
+		startup_msp432p401r_gcc.c
 endif
 
 # Include directories
 INCLUDES = \
-    -Iinclude \
-    -Iinclude/CMSIS \
-    -Iinclude/common \
-    -Iinclude/msp432
+	-I../include \
+	-I../include/CMSIS \
+	-I../include/common \
+	-I../include/msp432
