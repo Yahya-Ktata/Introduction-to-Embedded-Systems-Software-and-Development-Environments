@@ -75,6 +75,7 @@ else
 	CFLAGS = $(GEN_FLAGS) $(INCLUDES)
 	CPPFLAGS = -DHOST $(INCLUDES)
 	SIZE = size
+	LDFLAGS = -Wl,-Map=$(TARGET).map
 
 endif
 
